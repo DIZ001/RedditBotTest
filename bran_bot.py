@@ -37,50 +37,35 @@ def haveIReplied(comment):
 	else:
 		return False
 
-def branBotFF(r, comList):
-	print("Entering r/freefolk")
-	for sub in r.subreddit('freefolk').hot(limit=1):
+
+def branBot(r, comList, subRed):
+	print("Entering r/" + subRed)
+	for sub in r.subreddit(subRed).hot(limit=1):
 		print("Title:  " + sub.title)
 		sub.comments.replace_more(limit=None)
 		for com in sub.comments:
 			if haveIReplied(com):
-				if isTopLevelComment(com) and "Bran" and "stare" in com.body and com.id not in comList:
-					comList.append(com.id)
-					global numberOfPost 
-					numberOfPost += 1
-					com.reply("[***Stare Intensifies***](https://imgur.com/RS7qwc0)")
-					print("Post #" + str(numberOfPost) + "\tComId: " + com.id)
-					print("Sleeping for 15 mins")
-					time.sleep(900)
+				if isTopLevelComment(com):
+					if "Bran" and "stare" in com.body:
+						if com.id not in comList:
+							comList.append(com.id)
+							global numberOfPost 
+							numberOfPost += 1
+							com.reply("[***Stare Intensifies***](https://imgur.com/RS7qwc0)")
+							print("Post #" + str(numberOfPost) + "\tComId: " + com.id)
+							print("Sleeping for 15 mins")
+							time.sleep(900)
 	
-	print("Leaving r/freefolk")
-
-
-def branBotGOT(r, comList):
-	print("Entering r/gameofthrones")
-	for sub in r.subreddit('gameofthrones').hot(limit=1):
-		print("Title:  " + sub.title)
-		sub.comments.replace_more(limit=None)
-		for com in sub.comments:
-			if haveIReplied(com):
-				if isTopLevelComment(com) and "Bran" and "stare" in com.body and com.id not in comList:
-					comList.append(com.id)
-					global numberOfPost 
-					numberOfPost += 1
-					com.reply("[***Stare Intensifies***](https://imgur.com/RS7qwc0)")
-					print("Post #" + str(numberOfPost) + "\tComId: " + com.id)
-					print("Sleeping for 15 mins")
-					time.sleep(900)
-	
-	print("Leaving r/gameofthrones")
+	#print("Number of post made in subreddit: " + str(numberOfPost))
+	print("Leaving r/" + subRed)
 
 
 numberOfPost = 0
-commentsRepliedToFF = []
-commentsRepliedToGOT = []
+commentsRepliedTo = []
+subRedArr = ['freefolk', 'gameofthrones']
 
+reddit = bot_login()
 
 while True:
-	reddit = bot_login()
-	branBotFF(reddit, commentsRepliedToFF)
-	branBotGOT(reddit, commentsRepliedToGOT)
+	for sub in subRedArr:
+		branBot(reddit, commentsRepliedTo, sub)
